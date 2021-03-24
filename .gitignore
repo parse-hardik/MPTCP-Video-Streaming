@@ -124,6 +124,8 @@ venv.bak/
 .mypy_cache/
 .dmypy.json
 dmypy.json
+client_mptcp.py
+server_mptcp.py
 
 # Pyre type checker
 .pyre/
