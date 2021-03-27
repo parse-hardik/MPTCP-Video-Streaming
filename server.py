@@ -10,21 +10,25 @@ def server(ip, port):
     sock.bind((ip, port))  # Bind to the port
     sock.listen(64)
     print("Server Listening on {}".format((ip, port)))
-    conn, addr = sock.accept()     # Establish connection with client.
-    print('Got connection from', addr)
-    cap = cv2.VideoCapture(0)
-    if not cap.isOpened():
-        conn.close()
-        raise IOError("Cannot open webcam")
     while True:
-        ret,frame=cap.read()
-        data = pickle.dumps(frame) ### new code
-        conn.sendall(struct.pack("L", len(data))+data)
-    #frame = cv2.resize(frame, None, fx=  0.5, fy = 0.5, interpolation = cv2.INTER_AREA)
-        # conn.sendall(frame)
-    cap.release()
-    cv2.destroyAllWindows()
-    conn.close()
+        conn, addr = sock.accept()     # Establish connection with client.
+        print('Got connection from', addr)
+        cap = cv2.VideoCapture(0)
+        if not cap.isOpened():
+            conn.close()
+            raise IOError("Cannot open webcam")
+        count = 0
+        while True:
+            ret,frame=cap.read()
+            count+=1
+            data = pickle.dumps(frame) ### new code
+            conn.sendall(struct.pack("L", len(data))+data)
+            if count > 300:
+                break
+            # conn.sendall(frame)
+        cap.release()
+        cv2.destroyAllWindows()
+        conn.close()
 
 
 if __name__ == '__main__':

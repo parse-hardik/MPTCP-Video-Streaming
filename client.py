@@ -11,6 +11,7 @@ def client(ip, port):
     sock.connect((ip, port))
     data = b''
     payload_size = struct.calcsize("L") 
+    count=0
     while True:
         while len(data) < payload_size:
             data += sock.recv(4096)
@@ -22,11 +23,11 @@ def client(ip, port):
         frame_data = data[:msg_size]
         data = data[msg_size:]
         ###
-
+        count+=1
         frame=pickle.loads(frame_data)
+        frame = cv2.resize(frame, None, fx=  0.75, fy = 0.75, interpolation = cv2.INTER_AREA)
         cv2.imshow('frame', frame)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            sock.close()
+        if cv2.waitKey(1) & 0xFF == ord('q') or count>299:
             break
 
 
