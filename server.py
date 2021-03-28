@@ -1,6 +1,5 @@
 import argparse
 import socket
-import cv2
 import struct
 import pickle
 from threading import Thread
