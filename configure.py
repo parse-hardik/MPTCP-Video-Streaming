@@ -16,7 +16,7 @@ if '__main__' == __name__:
   h1 = net.addHost('h1')
   h2 = net.addHost('h2')
   r1 = net.addHost('r1')
-  linkopt={'bw':10}
+  linkopt={'bw':1000}
   net.addLink(r1,h1,cls=TCLink, **linkopt)
   net.addLink(r1,h1,cls=TCLink, **linkopt)
   net.addLink(r1,h2,cls=TCLink, **linkopt)
