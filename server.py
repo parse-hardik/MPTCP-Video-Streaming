@@ -29,14 +29,19 @@ def getFrames(masterSock):
         frame=pickle.loads(frame_data)
         yield frame
 
-def accept_forever(listener, masterSock, masterAddress):
+def accept_forever(listener, masterAddress):
     count=0
     while True:
         sock, address = listener.accept()
         count+=1
-        masterSock.connect(masterAddress)   
+        if count == 1:
+            masterSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            masterSock.connect(masterAddress)   
         print('Accepted connection from {}'.format(address))
         handle_conversation(sock, address, masterSock, masterAddress)
+        count-=1
+        if count == 0:
+            masterSock.close()
 
 def handle_conversation(sock, address, masterSock, masterAddress):
     try:
@@ -56,12 +61,10 @@ def handle_request(sock, masterSock):
         data = pickle.dumps(frame) ### new code
         sock.sendall(struct.pack("L", len(data))+data) 
         if count > 300:
-            masterSock.close()
             break
 
 def start(sock, masterAddress, workers=4):
-    masterSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    t = (sock, masterSock, masterAddress)
+    t = (sock, masterAddress)
     for i in range(workers):
         Thread(target=accept_forever, args=t).start()
 

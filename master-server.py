@@ -12,10 +12,11 @@ def create_socket(address):
     print("Server Listening on {}".format(address))
     return sock
 
-def start(sock):
-    sock, address = sock.accept()
-    print('Accepted connection from {}'.format(address))
-    handle_conversation(sock,address)
+def start(listener):
+    while True:
+        sock, address = listener.accept()
+        print('Accepted connection from {}'.format(address))
+        handle_conversation(sock,address)
 
 def handle_conversation(sock, address):
     try:
@@ -31,7 +32,6 @@ def handle_conversation(sock, address):
 def handle_request(sock):
     cap = cv2.VideoCapture(0)
     if not cap.isOpened():
-        sock.close()
         raise IOError("Cannot open webcam")
     count = 0
     while True:
@@ -44,7 +44,6 @@ def handle_request(sock):
         # sock.sendall(frame)
     cap.release()
     cv2.destroyAllWindows()
-    sock.close()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
