@@ -5,8 +5,6 @@ import struct
 import pickle
 from threading import Thread
 
-flag = False
-
 def create_socket(address):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -36,6 +34,7 @@ def accept_forever(listener, masterSock, masterAddress):
     while True:
         sock, address = listener.accept()
         count+=1
+        masterSock.connect(masterAddress)   
         print('Accepted connection from {}'.format(address))
         handle_conversation(sock, address, masterSock, masterAddress)
 
@@ -51,29 +50,17 @@ def handle_conversation(sock, address, masterSock, masterAddress):
         sock.close()
 
 def handle_request(sock, masterSock):
-    # cap = cv2.VideoCapture(0)
-    # if not cap.isOpened():
-    #     sock.close()
-    #     raise IOError("Cannot open webcam")
-    # count = 0
-    # while True:
-    #     ret,frame=cap.read()
-    #     count+=1
-    #     data = pickle.dumps(frame) ### new code
-    #     sock.sendall(struct.pack("L", len(data))+data)
-    #     if count > 300:
-    #         break
-    #     # sock.sendall(frame)
-    # cap.release()
-    # cv2.destroyAllWindows()
-    # sock.close()
+    count=0
     for frame in getFrames(masterSock):     
+        count+=1
         data = pickle.dumps(frame) ### new code
         sock.sendall(struct.pack("L", len(data))+data) 
+        if count > 300:
+            masterSock.close()
+            break
 
 def start(sock, masterAddress, workers=4):
     masterSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    masterSock.connect(masterAddress)
     t = (sock, masterSock, masterAddress)
     for i in range(workers):
         Thread(target=accept_forever, args=t).start()

@@ -27,7 +27,9 @@ def client(ip, port):
         frame=pickle.loads(frame_data)
         # frame = cv2.resize(frame, None, fx=  0.75, fy = 0.75, interpolation = cv2.INTER_AREA)
         cv2.imshow('frame', frame)
-        if cv2.waitKey(1) & 0xFF == ord('q') or count>299:
+        if cv2.waitKey(1) & 0xFF == ord('q') or count>300:
+            sock.close()
+            cv2.destroyAllWindows()
             break
 
 

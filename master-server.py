@@ -33,14 +33,14 @@ def handle_request(sock):
     if not cap.isOpened():
         sock.close()
         raise IOError("Cannot open webcam")
-    # count = 0
+    count = 0
     while True:
         ret,frame=cap.read()
-        # count+=1
+        count+=1
         data = pickle.dumps(frame) ### new code
         sock.sendall(struct.pack("L", len(data))+data)
-        # if count > 300:
-        #     break
+        if count > 300:
+            break
         # sock.sendall(frame)
     cap.release()
     cv2.destroyAllWindows()
