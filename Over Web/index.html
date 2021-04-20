@@ -45,48 +45,9 @@
 
         <!-- Body -->
         <main>
-          <script type="text/javascript" charset="utf-8">
-            $(document).ready(function () {
-              if ("WebSocket" in window) {
-                var ws_path =
-                  "ws://" +
-                  window.location.host +
-                  window.location.pathname +
-                  "ws";
-                //alert(ws_path);
-                var ws = new WebSocket(ws_path);
-                //alert(ws);
-                ws.onopen = function () {
-                  ws.send(1);
-                };
-                ws.onmessage = function (msg) {
-                  $("#cam").attr("src", "data:image/jpg;base64," + msg.data);
-                  ws.send(1);
-                };
-                ws.onerror = function (e) {
-                  console.log(e);
-                  ws.send(1);
-                };
-              } else {
-                alert("WebSocket not supported");
-              }
-            });
-          </script>
 
           <div class="container">
-            <section class="align--center pt3 pb3">
-              <a href="" class="btn btn--default reveal-on-scroll is-revealing"
-                >Start Streaming</a
-              >
-              <a href="" class="btn btn--outline reveal-on-scroll is-revealing"
-                >Stop Streaming</a
-              ><br />
-              <p
-                class="btn btn--default reveal-on-scroll is-revealing small mt1 text--white"
-              >
-                View code in Github.
-              </p>
-            </section>
+            <img id="cam" src=""/>
           </div>
         </main>
       </div>
@@ -94,16 +55,35 @@
 
     <!-- Scroll reveal -->
     <script src="https://unpkg.com/scrollreveal@4.0.0/dist/scrollreveal.min.js"></script>
-
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
     <!-- The compiled JavaScript file -->
     <script type="text/javascript" charset="utf-8" >
-      !function(){
+      jQuery(document).ready(function(){
         window;
         const e=document.documentElement;
         if(e.classList.remove("no-js"),e.classList.add("js"),document.body.classList.contains("has-animations")){
           (window.sr=ScrollReveal()).reveal(".reveal-on-scroll",{duration:600,distance:"20px",easing:"cubic-bezier(0.5, -0.01, 0, 1.005)",origin:"top",interval:100})
         }
-      }();
+         if ("WebSocket" in window) {
+            var ws_path = 'ws://' + window.location.host + window.location.pathname + 'ws';
+            alert(ws_path);
+            var ws = new WebSocket (ws_path);
+            alert(ws);
+            ws.onopen = function () {
+               ws.send(1);
+            };
+            ws.onmessage = function (msg) {
+               $("#cam").attr('src', 'data:image/jpg;base64,' + msg.data);
+               ws.send(1);
+            };
+            ws.onerror = function (e) {
+               console.log(e);
+               ws.send(1);
+            };
+         } else {
+             alert("WebSocket not supported");
+         }
+      });
     </script>
   </body>
 </html>
