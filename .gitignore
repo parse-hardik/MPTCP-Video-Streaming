@@ -129,5 +129,3 @@ server_mptcp.py
 
 # Pyre type checker
 .pyre/
-try.py
-Server.py
